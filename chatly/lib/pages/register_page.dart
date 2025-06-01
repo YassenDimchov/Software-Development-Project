@@ -159,7 +159,22 @@ class _RegisterPageState extends State<RegisterPage> {
       onPressed: () async {
         if (_registerFormKey.currentState!.validate() &&
             _profileImage != null) {
-          //Continue registering user.
+          _registerFormKey.currentState!.save();
+          print(_registerFormKey);
+          String? _uid = await _auth.registerUserUsingEmailAndPassword(
+            _email!,
+            _password!,
+          );
+          print(_email);
+          print(_password);
+          print(_uid);
+          String? _imageURL = await _cloudStorageService.saveUserImageToStorage(
+            _uid!,
+            _profileImage!,
+          );
+          print(_profileImage);
+          print(_imageURL);
+          await _db.createUser(_uid, _email!, _name!, _imageURL!);
         }
       },
     );

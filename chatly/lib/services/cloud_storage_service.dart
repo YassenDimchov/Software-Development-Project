@@ -20,7 +20,6 @@ class CloudStorageService {
       Reference _ref = _storage.ref().child(
         'images/users/$_uid/profile.${_file.extension}',
       );
-      if (_file.path == null) throw Exception('File path is null');
       UploadTask _task = _ref.putFile(File(_file.path!));
       return await _task.then((_result) => _result.ref.getDownloadURL());
     } catch (e) {
@@ -35,9 +34,8 @@ class CloudStorageService {
   ) async {
     try {
       Reference _ref = _storage.ref().child(
-        'images/chats/$_chatID/${_userID}_${Timestamp.now().microsecondsSinceEpoch}.${_file.extension}',
+        'images/chats/$_chatID/${_userID}_${Timestamp.now().millisecondsSinceEpoch}.${_file.extension}',
       );
-      if (_file.path == null) throw Exception('File path is null');
       UploadTask _task = _ref.putFile(File(_file.path!));
       return await _task.then((_result) => _result.ref.getDownloadURL());
     } catch (e) {
