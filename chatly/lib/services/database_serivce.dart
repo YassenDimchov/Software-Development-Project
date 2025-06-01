@@ -10,17 +10,39 @@ class DatabaseSerivce {
 
   DatabaseSerivce() {}
 
+  Future<void> createUser(
+    String _uid,
+    String _email,
+    String _name,
+    String _imageURL,
+  ) async {
+    try {
+      await _db.collection(USER_COLLECTION).doc(_uid).set({
+        "email": _email,
+        "image": _imageURL,
+        "last_active": DateTime.now().toUtc(),
+        "name": _name,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<DocumentSnapshot> getUser(String _uid) {
     return _db.collection(USER_COLLECTION).doc(_uid).get();
   }
 
   Future<void> updateUserLastSeenTime(String _uid) async {
     try {
-      await _db.collection(USER_COLLECTION).doc(_uid).update({
-        "last_active": DateTime.now().toUtc(),
-      });
+      final docRef = _db.collection(USER_COLLECTION).doc(_uid);
+      final doc = await docRef.get();
+      if (doc.exists) {
+        await docRef.update({"last_active": DateTime.now().toUtc()});
+      } else {
+        print("Document does not exist. Skipping update.");
+      }
     } catch (e) {
-      print(e);
+      print("Error updating last seen time: $e");
     }
   }
 }

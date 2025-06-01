@@ -22,21 +22,37 @@ class AuthentiactionProvider extends ChangeNotifier {
     _navigationService = GetIt.instance.get<NavigationService>();
     _databaseSerivce = GetIt.instance.get<DatabaseSerivce>();
 
+    //_auth.signOut(); // Uncomment this if you want to force logout on startup (not usually recommended)
+
     _auth.authStateChanges().listen((_user) {
       if (_user != null) {
         _databaseSerivce.updateUserLastSeenTime(_user.uid);
-        _databaseSerivce.getUser(_user.uid).then((_snapshot) {
-          Map<String, dynamic> _userData =
-              _snapshot.data()! as Map<String, dynamic>;
-          user = ChatUser.fromJSON({
-            "uid": _user.uid,
-            "name": _userData["name"],
-            "email": _userData["email"],
-            "last_active": _userData["last_active"],
-            "image": _userData["image"],
-          });
-          _navigationService.removeAndNavigateToRoute('/home');
-        });
+
+        _databaseSerivce
+            .getUser(_user.uid)
+            .then((_snapshot) {
+              final data = _snapshot.data() as Map<String, dynamic>?;
+
+              if (data == null) {
+                print(
+                  "⚠️ Firestore user document not found for UID: ${_user.uid}",
+                );
+                return;
+              }
+
+              user = ChatUser.fromJSON({
+                "uid": _user.uid,
+                "name": data["name"],
+                "email": data["email"],
+                "last_active": data["last_active"],
+                "image": data["image"],
+              });
+
+              _navigationService.removeAndNavigateToRoute('/home');
+            })
+            .catchError((e) {
+              print("❌ Error fetching user document: $e");
+            });
       } else {
         _navigationService.removeAndNavigateToRoute('/login');
       }
@@ -55,8 +71,32 @@ class AuthentiactionProvider extends ChangeNotifier {
       print(_auth.currentUser);
     } on FirebaseException {
       print("Erorr logging user into Firebase");
+    } catch (e) {
+      print(e);
     }
-    catche(e) {
+  }
+
+  Future<String?> registerUserUsingEmailAndPassword(
+    String _email,
+    String _password,
+  ) async {
+    try {
+      UserCredential _credentials = await _auth.createUserWithEmailAndPassword(
+        email: _email,
+        password: _password,
+      );
+      return _credentials.user!.uid;
+    } on FirebaseAuthException {
+      print("Error registering user.");
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
       print(e);
     }
   }
