@@ -8,6 +8,7 @@ import '../providers/authentiaction_provider.dart';
 
 //Widgets
 import '../widgets/top_bar.dart';
+import '../widgets/custom_list_view_tiles.dart';
 
 class ChatsPage extends StatefulWidget {
   @override
@@ -52,8 +53,25 @@ class _ChatsPageState extends State<ChatsPage> {
               icon: Icon(Icons.logout, color: Color.fromRGBO(0, 82, 218, 1.0)),
             ),
           ),
+          _chatsList(),
         ],
       ),
+    );
+  }
+
+  Widget _chatsList() {
+    return Expanded(child: _chatTile());
+  }
+
+  Widget _chatTile() {
+    return CustomListViewTileWithActivity(
+      height: _deviceHeight * 0.1,
+      title: "Cristiano Ronaldo",
+      subtitle: "Hello!",
+      imagePath: "https://i.pravatar.cc/300",
+      isActive: false,
+      isActivity: false,
+      onTap: () {},
     );
   }
 }
