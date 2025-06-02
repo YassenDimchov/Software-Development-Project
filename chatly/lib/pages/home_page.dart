@@ -31,6 +31,8 @@ class _HomePageState extends State<HomePage> {
             _currentPage = _index;
           });
         },
+        selectedItemColor: Colors.lightBlue,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
             label: "Chats",
