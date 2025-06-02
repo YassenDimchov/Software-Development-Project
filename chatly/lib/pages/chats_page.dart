@@ -115,9 +115,9 @@ class _ChatsPageState extends State<ChatsPage> {
   Widget _chatTile(Chat _chat) {
     List<ChatUser> _recepients = _chat.recepients();
     bool _isActive = _recepients.any((_d) => _d.wasRecentlyActive());
-    String _subTitleText = "";
+    String _subtitleText = "";
     if (_chat.messages.isNotEmpty) {
-      _subTitleText =
+      _subtitleText =
           _chat.messages.first.type != MessageType.TEXT
               ? "Media Attachment"
               : _chat.messages.first.content;
@@ -125,7 +125,7 @@ class _ChatsPageState extends State<ChatsPage> {
     return CustomListViewTileWithActivity(
       height: _deviceHeight * 0.1,
       title: _chat.title(),
-      subtitle: _subTitleText,
+      subtitle: _subtitleText,
       imagePath: _chat.imageURL(),
       isActive: _isActive,
       isActivity: _chat.activity,

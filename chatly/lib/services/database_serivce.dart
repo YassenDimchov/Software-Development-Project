@@ -44,7 +44,7 @@ class DatabaseSerivce {
         .collection(CHAT_COLLECTION)
         .doc(_chatID)
         .collection(MESSAGES_COLLECTION)
-        .orderBy("sent-time", descending: true)
+        .orderBy("sent_time", descending: true)
         .limit(1)
         .get();
   }
