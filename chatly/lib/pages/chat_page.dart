@@ -100,6 +100,7 @@ class _ChatPageState extends State<ChatPage> {
                       onPressed: () {},
                     ),
                   ),
+                  _messagesListView(),
                 ],
               ),
             ),
@@ -107,5 +108,44 @@ class _ChatPageState extends State<ChatPage> {
         );
       },
     );
+  }
+
+  Widget _messagesListView() {
+    if (_pageProvider.messages != null) {
+      if (_pageProvider.messages!.length != 0) {
+        return Container(
+          height: _deviceHeight * 0.74,
+          child: ListView.builder(
+            itemCount: _pageProvider.messages!.length,
+            itemBuilder: (BuildContext _context, int _index) {
+              ChatMessage _message = _pageProvider.messages![_index];
+              bool _isOwnMessage = _message.senderID == _auth.user.uid;
+              return Container(
+                child: CustomChatListViewTile(
+                  width: _deviceWidth * 0.8,
+                  deviceHeight: _deviceHeight,
+                  isOwnMessage: _isOwnMessage,
+                  message: _message,
+                  sender:
+                      this.widget.chat.members
+                          .where((_m) => _m.uid == _message.senderID)
+                          .first,
+                ),
+              );
+            },
+          ),
+        );
+      } else {
+        return Align(
+          alignment: Alignment.center,
+          child: Text(
+            "Its quiet here...",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+    } else {
+      return Center(child: CircularProgressIndicator(color: Colors.white));
+    }
   }
 }
