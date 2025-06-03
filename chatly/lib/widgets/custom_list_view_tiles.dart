@@ -100,7 +100,7 @@ class CustomChatListViewTile extends StatelessWidget {
               ? RoundedImageNetwork(
                 key: UniqueKey(),
                 imagePath: sender.imageURL,
-                size: width * 0.05,
+                size: width * 0.08,
               )
               : Container(),
           SizedBox(width: width * 0.05),

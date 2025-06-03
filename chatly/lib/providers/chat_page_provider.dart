@@ -38,6 +38,10 @@ class ChatPageProvider extends ChangeNotifier {
     return _message!;
   }
 
+  void set message(String _value) {
+    _message = _value;
+  }
+
   ChatPageProvider(this._chatId, this._auth, this._messagesListViewController) {
     _db = GetIt.instance.get<DatabaseSerivce>();
     _storage = GetIt.instance.get<CloudStorageService>();
@@ -82,7 +86,7 @@ class ChatPageProvider extends ChangeNotifier {
     }
   }
 
-  void sentImageMessage() async {
+  void sendImageMessage() async {
     try {
       PlatformFile? _file = await _media.pickImageFromLibrary();
       if (_file != null) {

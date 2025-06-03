@@ -101,6 +101,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                   _messagesListView(),
+                  _sendMessageForm(),
                 ],
               ),
             ),
@@ -147,5 +148,79 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return Center(child: CircularProgressIndicator(color: Colors.white));
     }
+  }
+
+  Widget _sendMessageForm() {
+    return Container(
+      height: _deviceHeight * 0.06,
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(30, 29, 37, 1.0),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: _deviceWidth * 0.04,
+        vertical: _deviceHeight * 0.03,
+      ),
+      child: Form(
+        key: _messageFormState,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _messageTextField(),
+            _sendMessgeButton(),
+            _imageMessageButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _messageTextField() {
+    return SizedBox(
+      width: _deviceWidth * 0.65,
+      child: CustomTextFormField(
+        onSaved: (_value) {
+          _pageProvider.message = _value;
+        },
+        regEx: r"^(?!\s*$).+",
+        hintText: "Type a message",
+        obscureText: false,
+      ),
+    );
+  }
+
+  Widget _sendMessgeButton() {
+    double _size = _deviceHeight * 0.04;
+    return Container(
+      height: _size,
+      width: _size,
+      child: IconButton(
+        onPressed: () {
+          if (_messageFormState.currentState!.validate()) {
+            _messageFormState.currentState!.save();
+            _pageProvider.sendTextMessage();
+            _messageFormState.currentState!.reset();
+          }
+        },
+        icon: Icon(Icons.send, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _imageMessageButton() {
+    double _size = _deviceHeight * 0.04;
+    return Container(
+      height: _size,
+      width: _size,
+      child: FloatingActionButton(
+        onPressed: () {
+          _pageProvider.sendImageMessage();
+        },
+        backgroundColor: Color.fromRGBO(0, 82, 218, 1.0),
+        child: Icon(Icons.camera_enhance, color: Colors.white),
+      ),
+    );
   }
 }
