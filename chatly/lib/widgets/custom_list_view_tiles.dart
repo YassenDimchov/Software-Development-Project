@@ -111,7 +111,12 @@ class CustomChatListViewTile extends StatelessWidget {
                 height: deviceHeight * 0.06,
                 width: width,
               )
-              : Text(message.content),
+              : ImageMessageBubble(
+                isOwnMessage: isOwnMessage,
+                message: message,
+                height: deviceHeight * 0.30,
+                width: width * 0.55,
+              ),
         ],
       ),
     );
