@@ -30,6 +30,8 @@ class ChatPageProvider extends ChangeNotifier {
   String _chatId;
   List<ChatMessage>? messages;
 
+  late StreamSubscription _messageStream;
+
   String? _message;
 
   String get message {
@@ -41,11 +43,71 @@ class ChatPageProvider extends ChangeNotifier {
     _storage = GetIt.instance.get<CloudStorageService>();
     _navigation = GetIt.instance.get<NavigationService>();
     _media = GetIt.instance.get<MediaService>();
+    listenToMessages();
   }
 
   @override
   void dispose() {
+    _messageStream.cancel();
     super.dispose();
+  }
+
+  void listenToMessages() {
+    try {
+      _messageStream = _db.streamMessagesForChat(_chatId).listen((_snapshot) {
+        List<ChatMessage> _messages =
+            _snapshot.docs.map((_m) {
+              Map<String, dynamic> _messageData =
+                  _m.data() as Map<String, dynamic>;
+              return ChatMessage.fromJSON(_messageData);
+            }).toList();
+        messages = _messages;
+        notifyListeners();
+      });
+    } catch (e) {
+      print(e);
+      print("Error getting messages");
+    }
+  }
+
+  void sendTextMessage() {
+    if (_message != null) {
+      ChatMessage _messageToSend = ChatMessage(
+        senderID: _auth.user.uid,
+        type: MessageType.TEXT,
+        content: _message!,
+        sentTime: DateTime.now(),
+      );
+      _db.addMessageToChat(_chatId, _messageToSend);
+    }
+  }
+
+  void sentImageMessage() async {
+    try {
+      PlatformFile? _file = await _media.pickImageFromLibrary();
+      if (_file != null) {
+        String? _downloadURL = await _storage.saveChatImageToStorage(
+          _chatId,
+          _auth.user.uid,
+          _file,
+        );
+        ChatMessage _messageToSend = ChatMessage(
+          senderID: _auth.user.uid,
+          type: MessageType.IMAGE,
+          content: _downloadURL!,
+          sentTime: DateTime.now(),
+        );
+        _db.addMessageToChat(_chatId, _messageToSend);
+      }
+    } catch (e) {
+      print("Error sending image message");
+      print(e);
+    }
+  }
+
+  void delteChat() {
+    goBack();
+    _db.deleteChat(_chatId);
   }
 
   void goBack() {
