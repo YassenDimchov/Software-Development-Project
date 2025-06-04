@@ -82,6 +82,7 @@ class _UsersPageState extends State<UsersPage> {
                 icon: Icons.search,
               ),
               _usersList(),
+              _createChatButton(),
             ],
           ),
         );
@@ -125,6 +126,23 @@ class _UsersPageState extends State<UsersPage> {
           return Center(child: CircularProgressIndicator(color: Colors.white));
         }
       }(),
+    );
+  }
+
+  Widget _createChatButton() {
+    return Visibility(
+      visible: _pageProvider.selectedUsers.isNotEmpty,
+      child: RoundedButton(
+        name:
+            _pageProvider.selectedUsers.length == 1
+                ? "Chat With ${_pageProvider.selectedUsers.first.name}"
+                : "Create Group Chat",
+        height: _deviceHeight * 0.08,
+        width: _deviceWidth * 0.8,
+        onPressed: () {
+          _pageProvider.createChat();
+        },
+      ),
     );
   }
 }
