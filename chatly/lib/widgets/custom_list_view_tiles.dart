@@ -88,7 +88,7 @@ class CustomChatListViewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 15),
       width: width,
       child: Row(
         mainAxisSize: MainAxisSize.max,
