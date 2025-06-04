@@ -96,28 +96,31 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Widget _usersList() {
-    List<ChatUser>? _users = _pageProvider.users;
+    List<ChatUser>? allUsers = _pageProvider.users;
+
     return Expanded(
       child: () {
-        if (_users != null) {
-          if (_users.length != 0) {
+        if (allUsers != null) {
+          List<ChatUser> filteredUsers =
+              allUsers.where((user) => user.uid != _auth.user.uid).toList();
+
+          if (filteredUsers.isNotEmpty) {
             return ListView.builder(
+              itemCount: filteredUsers.length,
               itemBuilder: (BuildContext _context, int _index) {
+                ChatUser user = filteredUsers[_index];
                 return CustomListViewTile(
                   height: _deviceHeight * 0.1,
-                  title: _users[_index].name,
-                  subtitle: "Last Active: ${_users[_index].lastDayActive()}",
-                  imagePath: _users[_index].imageURL,
-                  isActive: _users[_index].wasRecentlyActive(),
-                  isSelected: _pageProvider.selectedUsers.contains(
-                    _users[_index],
-                  ),
+                  title: user.name,
+                  subtitle: "Last Active: ${user.lastDayActive()}",
+                  imagePath: user.imageURL,
+                  isActive: user.wasRecentlyActive(),
+                  isSelected: _pageProvider.selectedUsers.contains(user),
                   onTap: () {
-                    _pageProvider.updateSelectedUsers(_users[_index]);
+                    _pageProvider.updateSelectedUsers(user);
                   },
                 );
               },
-              itemCount: _users.length,
             );
           } else {
             return Center(
